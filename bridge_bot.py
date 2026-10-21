@@ -78,7 +78,6 @@ async def on_ready():
 
 @bot.event
 async def on_message(message: discord.Message):
-    # 웹훅/봇 자신의 메시지는 무시 -> 무한루프 방지
     if message.webhook_id is not None:
         return
     if message.author == bot.user:
@@ -96,7 +95,6 @@ async def on_message(message: discord.Message):
         if target_id == message.channel.id:
             continue
 
-        # discord.File 객체는 1회용이라 대상마다 새로 생성해야 함
         files = [await a.to_file() for a in message.attachments] if message.attachments else []
 
         try:
@@ -105,7 +103,7 @@ async def on_message(message: discord.Message):
                 username=username,
                 avatar_url=avatar_url,
                 files=files,
-                allowed_mentions=discord.AllowedMentions.none(),  # 다른 서버 멘션 오작동 방지
+                allowed_mentions=discord.AllowedMentions.none(), 
             )
         except discord.HTTPException as e:
             logger.error("채널 %s로 전달 실패: %s", target_id, e)
